@@ -1,14 +1,35 @@
 import React from 'react'
 import Center from './components/Center'
 import Header from './components/Header'
+import { AnimatePresence, motion } from 'framer-motion';
+import { Routes, Route, useLocation, useNavigate, NavigationType } from 'react-router-dom';
+import InvoiceInfo from './components/InvoiceInfo';
+import invoiceSlice from './redux/invoiceSlice';
+import { useDispatch } from 'react-redux';
 
 function App() {
-  return (
-    <div>
-      <Header/>
+  const location = useLocation()
+  const dispatch = useDispatch()
 
-      <Center/>
-      
+  const onDelete = (id) => {
+    dispatch(invoiceSlice.actions.deleteInvoice({id : id }))
+  }
+
+  console.log(location.state)
+
+  const isGoingBack = true
+
+  return (
+    <div className=' dark:bg-[#141625] duration-300 min-h-screen bg-[#f8f8fb]'>
+      <Header />
+
+      <AnimatePresence mode='wait'>
+        <Routes location={location} key={location.pathname}>
+          < Route element={<Center />} path='' />
+          < Route element={<InvoiceInfo  onDelete={onDelete} />} path='/invoice' />
+        </Routes>
+      </AnimatePresence>
+
     </div>
   )
 }

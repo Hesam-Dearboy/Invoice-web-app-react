@@ -5,10 +5,7 @@ import data from "../assets/data/data.json";
 import getForwardDate from "../functions/forwardDate";
 import generateID from "../functions/generateId";
 
-
-const today = moment().format('YYYY-MM-DD')
-
-
+const today = moment().format("YYYY-MM-DD");
 
 const invoiceSlice = createSlice({
   name: "invoces",
@@ -16,6 +13,7 @@ const invoiceSlice = createSlice({
   initialState: {
     allInvoice: data,
     filteredInvoice: [],
+    invoiceById: null,
   },
 
   reducers: {
@@ -27,8 +25,20 @@ const invoiceSlice = createSlice({
         const filteredData = allInvoice.filter((invoice) => {
           return invoice.status === action.payload.status;
         });
-        console.log(filteredData)
+        console.log(filteredData);
         state.filteredInvoice = filteredData;
+      }
+    },
+    getInvoiceById: (state, action) => {
+      const { allInvoice } = state;
+      const invoice = allInvoice.find((item) => item.id === action.payload.id)
+      state.invoiceById = invoice
+    },
+    deleteInvoice : (state, action) => {
+      const { allInvoice } = state;
+      const index = allInvoice.findIndex(invoice => invoice.id === action.payload.id)
+      if (index !== -1) {
+        allInvoice.splice(index, 1);
       }
     },
     addInvoice: (state, action) => {
@@ -49,7 +59,7 @@ const invoiceSlice = createSlice({
       } = action.payload;
 
       const finalData = {
-        id: generateID(),
+        id: `${generateID()}`,
         createdAt: today,
         paymentDue: getForwardDate(paymentTerms),
         description: description,
@@ -71,7 +81,7 @@ const invoiceSlice = createSlice({
         },
         items: item,
         total: item.reduce((acc, i) => {
-          return acc + i.total;
+          return acc + Number(i.total);
         }, 0),
       };
       state.allInvoice.push(finalData);

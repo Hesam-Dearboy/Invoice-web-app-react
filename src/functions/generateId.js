@@ -7,7 +7,7 @@ function generateID() {
     for (var i = 0; i < 4; i++) {
       id += Math.floor(Math.random() * 10);
     }
-    return "#" + id;
+    return id;
 }
 
 export default generateID

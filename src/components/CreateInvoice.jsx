@@ -10,6 +10,7 @@ import invoiceSlice from '../redux/invoiceSlice';
 
 function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
     const dispatch = useDispatch()
+    const [filterValue, setfilterValue] = useState('')
     const deliveryTimes = [
         { text: 'Next 1 day', value: 1 },
         { text: 'Next 7 day', value: 7 },
@@ -84,6 +85,8 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
             clientCountry,
             item,
         }))
+        dispatch(invoiceSlice.actions.filterInvoice({ status: filterValue }))
+        
     }
 
 
@@ -109,7 +112,7 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
                 animate={{ opacity: 1, x: 0, transition: { type: 'spring', stiffness: 300, damping: 40, duration: .4 } }
                 }
                 exit={{ x: -700, transition: { duration: .2 } }}
-                className=' flex flex-col dark:text-white dark:bg-[#141625] bg-white z-10 md:pl-[150px] py-16 px-6 h-screen md:w-[768px] md:rounded-r-3xl'
+                className=' flex flex-col dark:text-white dark:bg-[#141625] bg-white  md:pl-[150px] py-16 px-6 h-screen md:w-[768px] md:rounded-r-3xl'
             >
 
                 <h1 className=' font-semibold dark:text-white text-3xl'>

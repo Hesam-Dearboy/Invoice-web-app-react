@@ -1,10 +1,13 @@
 import React from 'react'
 import PaidStatus from './PaidStatus'
 import rightArrow from '../assets/icon-arrow-right.svg'
+import { Link } from 'react-router-dom'
 
 function InvoiceCard({ invoice }) {
     return (
-        <div>
+        <Link
+        to={`invoice?${invoice.id}`}
+        >
             {/* Big Screen  */}
             <div className=' hidden md:flex cursor-pointer hover:border border-purple-500 py-4 shadow-sm px-6 dark:bg-[#1E2139] bg-white rounded-lg  items-center justify-between'>
                 <div className=' flex items-center '>
@@ -70,7 +73,7 @@ function InvoiceCard({ invoice }) {
 
                 </div>
             </div>
-        </div>
+        </Link>
     )
 }
 

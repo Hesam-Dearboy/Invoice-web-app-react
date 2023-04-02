@@ -6,8 +6,10 @@ import InvoiceCard from './InvoiceCard'
 import { useDispatch, useSelector } from 'react-redux'
 import invoiceSlice from '../redux/invoiceSlice'
 import CreateInvoice from './CreateInvoice'
+import { useLocation } from 'react-router-dom'
 
 function Center() {
+    const location = useLocation()
     const controls = useAnimation();
     const dispatch = useDispatch()
     const filter = ['paid', 'pending', 'draft']
@@ -45,14 +47,17 @@ function Center() {
         close: { opacity: 0, x: -100, duration: 500, transition }
     }
 
+    
+
     return (
         <div>
             <div className='dark:bg-[#141625] duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[72px]  '>
-                <AnimatePresence>
+                
                     <motion.div
+                        key={location.pathname}
                         initial={{ x: '0' }}
                         animate={{ x: 0 }}
-                        exit={{ x: '-100%' }}
+                        exit={{ x: '-150%' }}
                         transition={{ duration: 0.5 }}
                         className='   max-w-3xl flex flex-col   mx-auto my-auto'>
                         {/* Center Header */}
@@ -119,7 +124,7 @@ function Center() {
                         </div>
 
                     </motion.div>
-                </AnimatePresence>
+
             </div>
             <AnimatePresence>
                 {openCreateInvoice &&
