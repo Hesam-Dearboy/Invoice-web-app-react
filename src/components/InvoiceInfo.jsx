@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import leftArrow from '../assets/icon-arrow-left.svg'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import PaidStatus from './PaidStatus'
 import { useDispatch, useSelector } from 'react-redux'
 import invoiceSlice from '../redux/invoiceSlice'
@@ -23,14 +23,14 @@ function InvoiceInfo({ onDelete }) {
 
     const invoiceId = location.search.substring(1)
     const onMakePaidClick = () => {
-        dispatch(invoiceSlice.actions.updateInvoiceStatus({ id : invoiceId , status:'paid'}))
+        dispatch(invoiceSlice.actions.updateInvoiceStatus({ id: invoiceId, status: 'paid' }))
         dispatch(invoiceSlice.actions.getInvoiceById({ id: invoiceId }))
     }
 
     useEffect(() => {
         dispatch(invoiceSlice.actions.getInvoiceById({ id: invoiceId }))
 
-    }, [invoiceId , onMakePaidClick])
+    }, [invoiceId, onMakePaidClick])
 
 
 
@@ -40,7 +40,7 @@ function InvoiceInfo({ onDelete }) {
         onDelete(invoiceId)
     }
 
-    
+
 
     const invoice = useSelector((state) => state.invoices.invoiceById)
 
@@ -201,7 +201,9 @@ function InvoiceInfo({ onDelete }) {
             }
 
             {isDeleteModalOpen && <DeleteModal onDeleteButtonClick={onDeleteButtonClick} setIsDeleteModalOpen={setIsDeleteModalOpen} invoiceId={invoice.id} />}
-            {isEditOpen && <CreateInvoice invoice={invoice} type='edit' setOpenCreateInvoice={setIsEditOpen}/>}
+            <AnimatePresence>
+                {isEditOpen && <CreateInvoice invoice={invoice} type='edit' setOpenCreateInvoice={setIsEditOpen} />}
+            </AnimatePresence>
         </div>
     )
 }

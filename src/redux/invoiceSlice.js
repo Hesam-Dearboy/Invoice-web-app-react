@@ -118,7 +118,6 @@ const invoiceSlice = createSlice({
 
       const invoiceIndex = allInvoice.findIndex((invoice) => invoice.id === id);
       const edittedObject = {
-        paymentDue: getForwardDate(paymentTerms),
         description: description,
         paymentTerms: paymentTerms,
         clientName: clientName,

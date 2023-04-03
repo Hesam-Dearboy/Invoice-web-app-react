@@ -91,6 +91,7 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                 item,
                 id: invoice.id,
             }))
+            setOpenCreateInvoice(false)
         } else {
 
             dispatch(invoiceSlice.actions.addInvoice({
