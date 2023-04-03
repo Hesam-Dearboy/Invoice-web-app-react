@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import invoiceSlice from '../redux/invoiceSlice'
 import formatDate from '../functions/formatDate'
 import DeleteModal from './DeleteModal'
+import CreateInvoice from './CreateInvoice'
 
 
 function InvoiceInfo({ onDelete }) {
@@ -16,21 +17,30 @@ function InvoiceInfo({ onDelete }) {
 
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isEditOpen, setIsEditOpen] = useState(false)
+
 
 
     const invoiceId = location.search.substring(1)
+    const onMakePaidClick = () => {
+        dispatch(invoiceSlice.actions.updateInvoiceStatus({ id : invoiceId , status:'paid'}))
+        dispatch(invoiceSlice.actions.getInvoiceById({ id: invoiceId }))
+    }
 
     useEffect(() => {
         dispatch(invoiceSlice.actions.getInvoiceById({ id: invoiceId }))
 
-    }, [invoiceId])
+    }, [invoiceId , onMakePaidClick])
 
 
 
     const onDeleteButtonClick = () => {
         navigate('/')
+        setIsDeleteModalOpen(false)
         onDelete(invoiceId)
     }
+
+    
 
     const invoice = useSelector((state) => state.invoices.invoiceById)
 
@@ -61,13 +71,12 @@ function InvoiceInfo({ onDelete }) {
                             <PaidStatus type={invoice.status} />
                         </div>
                         <div className=' md:block hidden'>
-                            <button className=' text-[#7e88c3] text-center dark:bg-[#252945] hover:opacity-80  bg-slate-100 p-3 px-7 rounded-full '>Edit</button>
+                            <button onClick={() => setIsEditOpen(true)} className=' text-[#7e88c3] text-center dark:bg-[#252945] hover:opacity-80  bg-slate-100 p-3 px-7 rounded-full '>Edit</button>
                             <button onClick={() => setIsDeleteModalOpen(true)} className=' ml-3 text-center  text-white bg-red-500 hover:opacity-80 p-3 px-7 rounded-full'>Delete</button>
                             {invoice.status === 'pending' &&
-                                <button className=' ml-3 text-center  text-white bg-[#7c5dfa] hover:opacity-80 p-3 px-7 rounded-full'>Make as Paid</button>
+                                <button onClick={onMakePaidClick} className=' ml-3 text-center  text-white bg-[#7c5dfa] hover:opacity-80 p-3 px-7 rounded-full'>Make as Paid</button>
                             }
 
-                            <button></button>
                         </div>
                     </div>
 
@@ -136,7 +145,7 @@ function InvoiceInfo({ onDelete }) {
 
                         <div className=' hidden sm:block mt-10 bg-[#f9fafe] dark:bg-[#252945] rounded-lg rounded-b-none space-y-4  p-10'>
                             {invoice.items.map(item => (
-                                <div className=' flex justify-around  '>
+                                <div key={item.name} className=' flex justify-around  '>
                                     <div className=' space-y-4' >
                                         <p className=' text-gray-400 font-thin'>Item name</p>
 
@@ -192,6 +201,7 @@ function InvoiceInfo({ onDelete }) {
             }
 
             {isDeleteModalOpen && <DeleteModal onDeleteButtonClick={onDeleteButtonClick} setIsDeleteModalOpen={setIsDeleteModalOpen} invoiceId={invoice.id} />}
+            {isEditOpen && <CreateInvoice invoice={invoice} type='edit' setOpenCreateInvoice={setIsEditOpen}/>}
         </div>
     )
 }

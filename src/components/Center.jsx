@@ -34,7 +34,6 @@ function Center() {
                 damping: 20
             }
         });
-        console.log('start')
     }, [controls]);
 
 

@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import AddItem from './AddItem'
 import { v4 as uuidv4 } from "uuid";
-import generateID from '../functions/generateId';
 import { useDispatch } from 'react-redux';
 import invoiceSlice from '../redux/invoiceSlice';
 
 
 
-function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
+function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type }) {
     const dispatch = useDispatch()
+
+
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+
     const [filterValue, setfilterValue] = useState('')
     const deliveryTimes = [
         { text: 'Next 1 day', value: 1 },
@@ -70,31 +74,71 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
     }
 
     const onSubmit = () => {
-        dispatch(invoiceSlice.actions.addInvoice({
-            description,
-            paymentTerms,
-            clientName,
-            clientEmail,
-            senderStreet,
-            senderCity,
-            senderPostCode,
-            senderCountry,
-            clientStreet,
-            clientCity,
-            clientPostCode,
-            clientCountry,
-            item,
-        }))
-        dispatch(invoiceSlice.actions.filterInvoice({ status: filterValue }))
-        
+        if (type === 'edit') {
+            dispatch(invoiceSlice.actions.editInvoice({
+                description,
+                paymentTerms,
+                clientName,
+                clientEmail,
+                senderStreet,
+                senderCity,
+                senderPostCode,
+                senderCountry,
+                clientStreet,
+                clientCity,
+                clientPostCode,
+                clientCountry,
+                item,
+                id: invoice.id,
+            }))
+        } else {
+
+            dispatch(invoiceSlice.actions.addInvoice({
+                description,
+                paymentTerms,
+                clientName,
+                clientEmail,
+                senderStreet,
+                senderCity,
+                senderPostCode,
+                senderCountry,
+                clientStreet,
+                clientCity,
+                clientPostCode,
+                clientCountry,
+                item,
+            }))
+            dispatch(invoiceSlice.actions.filterInvoice({ status: filterValue }))
+
+        }
+
+
     }
 
 
+    if (type === 'edit' && isFirstLoad) {
+        const updatedItemsArray = invoice.items.map((obj, index) => {
+            return { ...obj, id: index + 1 };
+        });
 
 
 
+        setClientName(invoice.clientName)
+        setClientCity(invoice.clientAddress.city)
+        setClientStreet(invoice.clientAddress.street)
+        setClientPostCode(invoice.clientAddress.postCode)
+        setClientCountry(invoice.clientAddress.country)
+        setClientEmail(invoice.clientEmail)
+        setpaymentTerms(invoice.paymentTerms)
+        setDescription(invoice.description)
+        setSenderCity(invoice.senderAddress.city)
+        setSenderStreet(invoice.senderAddress.street)
+        setSenderCountry(invoice.senderAddress.country)
+        setSenderPostCode(invoice.senderAddress.postCode)
+        setItem(updatedItemsArray)
 
-
+        setIsFirstLoad(false)
+    }
 
 
     return (
@@ -116,7 +160,7 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
             >
 
                 <h1 className=' font-semibold dark:text-white text-3xl'>
-                    Create Invoice
+                    {type == 'edit' ? 'Edit' : 'Create'} Invoice
                 </h1>
 
                 <div className=' overflow-scroll my-14'>
@@ -269,9 +313,25 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice }) {
 
                 </div>
 
-                <button onClick={onSubmit}>
-                    sumbit
-                </button>
+                <div className=' flex  justify-between'>
+                    <div>
+                        <button
+                        onClick={() => {
+                            setOpenCreateInvoice(false)
+                        }}
+                        className=' bg-gray-200  hover:opacity-80 mx-auto py-4 items-center dark:text-white  dark:bg-[#252945] justify-center  px-8 rounded-full '>
+                            Discard
+                        </button>
+                    </div>
+
+                    <div>
+                        <button className=' text-white  hover:opacity-80 mx-auto py-4 items-center bg-[#7c5dfa] justify-center  px-8 rounded-full ' onClick={onSubmit}>
+                            Save & Send
+                        </button>
+                    </div>
+                </div>
+
+
 
             </motion.div>
 
