@@ -4,7 +4,7 @@ import AddItem from './AddItem'
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from 'react-redux';
 import invoiceSlice from '../redux/invoiceSlice';
-
+import { validateSenderStreetAddress, validateSenderPostCode, validateSenderCity, validateCLientEmail, validateCLientName, validateClientCity, validateClientPostCode, validateClientStreetAddress, validateItemCount, validateItemName, validateItemPrice, validateSenderCountry, validateClientCountry } from '../functions/createInvoiceValidator'
 
 
 function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type }) {
@@ -12,6 +12,8 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
 
 
     const [isFirstLoad, setIsFirstLoad] = useState(true);
+    const [isValidatorActive, setIsValidatorActive] = useState(false)
+    const [isValid, setIsValid] = useState(true)
 
 
     const [filterValue, setfilterValue] = useState('')
@@ -36,15 +38,13 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
     const [clientCountry, setClientCountry] = useState('')
     const [description, setDescription] = useState('')
 
-
-
     const [selectDeliveryDate, setSelectDeliveryDate] = useState('')
     const [paymentTerms, setpaymentTerms] = useState(deliveryTimes[0].value)
 
     const [item, setItem] = useState(
         [
             {
-                'name': "New Item",
+                'name': "",
                 'quantity': 1,
                 'price': 0,
                 'total': 0,
@@ -142,6 +142,26 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
     }
 
 
+    function itemsValidator() {
+        const itemName = item.map(i => validateItemName(i.name))
+        const itemCount = item.map(i => validateItemCount(i.quantity))
+        const itemPrice = item.map(i => validateItemPrice(i.price))
+
+        const allItemsElement = itemCount.concat(itemPrice, itemName)
+
+        return (allItemsElement.includes(false) === true ? false : true)
+    }
+
+
+
+    function validator() {
+        if (validateSenderStreetAddress(senderStreet) && validateSenderPostCode(senderPostCode) && validateSenderCity(senderCity) && validateCLientEmail(clientEmail) && validateCLientName(clientName) && validateClientCity(clientCity) && validateClientPostCode(clientPostCode) && validateClientStreetAddress(clientStreet) && validateSenderCountry(senderCountry) && validateClientCountry(clientCountry) && itemsValidator()) {
+            return true
+        }
+        return false
+    }
+
+
     return (
         <div onClick={(e) => {
             if (e.target !== e.currentTarget) {
@@ -175,26 +195,26 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                             <label className=' text-gray-400 font-light'>
                                 Street Address
                             </label>
-                            <input value={senderStreet} onChange={(e) => setSenderStreet(e.target.value)} type='text' className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800' />
+                            <input value={senderStreet} id='senderStreet' onChange={(e) => setSenderStreet(e.target.value)} type='text' className={`dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800 ${isValidatorActive && !validateSenderStreetAddress(senderStreet) && ' border-red-500 dark:border-red-500 outline-red-500 border-2'}`} />
                         </div>
 
                         <div className=' flex flex-col mr-4 col-span-1'>
                             <label className=' text-gray-400 font-light'>
                                 City
                             </label>
-                            <input type='text' value={senderCity} onChange={(e) => setSenderCity(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 border-gray-300 dark:border-gray-800' />
+                            <input type='text' value={senderCity} onChange={(e) => setSenderCity(e.target.value)} className={`dark:bg-[#1e2139] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 border-gray-300 ${isValidatorActive && !validateSenderCity(senderCity) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'} dark:border-gray-800`} />
                         </div>
                         <div className=' flex flex-col mr-4 col-span-1'>
                             <label className=' text-gray-400 font-light'>
                                 Post Code
                             </label>
-                            <input type='text' value={senderPostCode} onChange={(e) => setSenderPostCode(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg focus:outline-none  focus:outline-purple-400 border-gray-300 dark:border-gray-800' />
+                            <input type='text' value={senderPostCode} onChange={(e) => setSenderPostCode(e.target.value)} className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg focus:outline-none  focus:outline-purple-400 border-gray-300 ${isValidatorActive && !validateSenderPostCode(senderPostCode) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'} dark:border-gray-800`} />
                         </div>
                         <div className=' flex flex-col col-span-1'>
                             <label className=' text-gray-400 font-light'>
                                 Country
                             </label>
-                            <input type='text' value={senderCountry} onChange={(e) => setSenderCountry(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 border-gray-300 dark:border-gray-800' />
+                            <input type='text' value={senderCountry} onChange={(e) => setSenderCountry(e.target.value)} className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 ${isValidatorActive && !validateSenderCountry(senderCountry) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'} border-gray-300 dark:border-gray-800`} />
                         </div>
 
 
@@ -211,40 +231,43 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                             <label className=' text-gray-400 font-light'>
                                 Client Name
                             </label>
-                            <input type='text' value={clientName} onChange={(e) => setClientName(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800' />
+                            <input type='text' value={clientName} onChange={(e) => setClientName(e.target.value)} className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${isValidatorActive && !validateCLientName(clientName) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'}   dark:border-gray-800`} />
                         </div>
 
                         <div className=' flex flex-col   col-span-3'>
                             <label className=' text-gray-400 font-light'>
                                 Client Email
                             </label>
-                            <input type='text' value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800' />
+                            <input type='text' value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${isValidatorActive && !validateCLientEmail(clientEmail) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'}   dark:border-gray-800`} />
                         </div>
 
                         <div className=' flex flex-col col-span-3'>
                             <label className=' text-gray-400 font-light'>
                                 Street Address
                             </label>
-                            <input type='text' value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 border-gray-300 dark:border-gray-800' />
+                            <input type='text' value={clientStreet} onChange={(e) => setClientStreet(e.target.value)} className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${isValidatorActive && !validateClientStreetAddress(clientStreet) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'}   dark:border-gray-800`} />
                         </div>
 
                         <div className=' flex flex-col mr-4 col-span-1'>
                             <label className=' text-gray-400 font-light'>
                                 City
                             </label>
-                            <input type='text' value={clientCity} onChange={(e) => setClientCity(e.target.value)} className=' dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800' />
+                            <input type='text' value={clientCity} onChange={(e) => setClientCity(e.target.value)} className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${isValidatorActive && !validateClientCity(clientCity) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'}   dark:border-gray-800`} />
                         </div>
                         <div className=' flex flex-col mr-4 col-span-1'>
                             <label className=' text-gray-400 font-light'>
                                 Post Code
                             </label>
-                            <input type='text' value={clientPostCode} onChange={(e) => setClientPostCode(e.target.value)} className='dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800' />
+                            <input type='text' value={clientPostCode} onChange={(e) => setClientPostCode(e.target.value)}
+                                className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${isValidatorActive && !validateClientPostCode(clientPostCode) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'}   dark:border-gray-800`}
+                            />
                         </div>
                         <div className=' flex flex-col col-span-1'>
                             <label className=' text-gray-400 font-light'>
                                 Country
                             </label>
-                            <input type='text' value={clientCountry} onChange={(e) => setClientCountry(e.target.value)} className='dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg focus:outline-none   focus:outline-purple-400 border-gray-300 dark:border-gray-800' />
+                            <input type='text' value={clientCountry} onChange={(e) => setClientCountry(e.target.value)}
+                                className={` dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${isValidatorActive && !validateClientCountry(clientCountry) && 'border-red-500 dark:border-red-500 outline-red-500 border-2'}   dark:border-gray-800`} />
                         </div>
 
 
@@ -288,7 +311,7 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                     </h2>
                     {item.map((itemDetails, index) => (
                         <div className=' border-b pb-2 border-gray-300 mb-4 '>
-                            <AddItem key={index} handelOnChange={handelOnChange} setItem={setItem} onDelete={onDelete} itemDetails={itemDetails} />
+                            <AddItem isValidatorActive={isValidatorActive} key={index} handelOnChange={handelOnChange} setItem={setItem} onDelete={onDelete} itemDetails={itemDetails} />
                         </div>
                     ))}
 
@@ -300,7 +323,7 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                                 (state) => [
                                     ...state,
                                     {
-                                        name: "New Item",
+                                        name: "",
                                         quantity: 1,
                                         price: 0,
                                         total: 0,
@@ -317,16 +340,23 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                 <div className=' flex  justify-between'>
                     <div>
                         <button
-                        onClick={() => {
-                            setOpenCreateInvoice(false)
-                        }}
-                        className=' bg-gray-200  hover:opacity-80 mx-auto py-4 items-center dark:text-white  dark:bg-[#252945] justify-center  px-8 rounded-full '>
+                            onClick={() => {
+                                setOpenCreateInvoice(false)
+                            }}
+                            className=' bg-gray-200  hover:opacity-80 mx-auto py-4 items-center dark:text-white  dark:bg-[#252945] justify-center  px-8 rounded-full '>
                             Discard
                         </button>
                     </div>
 
                     <div>
-                        <button className=' text-white  hover:opacity-80 mx-auto py-4 items-center bg-[#7c5dfa] justify-center  px-8 rounded-full ' onClick={onSubmit}>
+                        <button className=' text-white  hover:opacity-80 mx-auto py-4 items-center bg-[#7c5dfa] justify-center  px-8 rounded-full ' onClick={() => {
+                            const isValid = validator()
+                            setIsValidatorActive(true)
+                            if (isValid) {
+                                onSubmit()
+                                setOpenCreateInvoice(false)
+                            }
+                        }}>
                             Save & Send
                         </button>
                     </div>
