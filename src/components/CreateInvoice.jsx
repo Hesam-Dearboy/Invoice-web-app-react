@@ -177,14 +177,14 @@ function CreateInvoice({ openCreateInvoice, setOpenCreateInvoice, invoice, type 
                 animate={{ opacity: 1, x: 0, transition: { type: 'spring', stiffness: 300, damping: 40, duration: .4 } }
                 }
                 exit={{ x: -700, transition: { duration: .2 } }}
-                className=' flex flex-col dark:text-white dark:bg-[#141625] bg-white  md:pl-[150px] py-16 px-6 h-screen md:w-[768px] md:rounded-r-3xl'
+                className='  scrollbar-hide flex flex-col dark:text-white dark:bg-[#141625] bg-white  md:pl-[150px] py-16 px-6 h-screen md:w-[768px] md:rounded-r-3xl'
             >
 
                 <h1 className=' font-semibold dark:text-white text-3xl'>
                     {type == 'edit' ? 'Edit' : 'Create'} Invoice
                 </h1>
 
-                <div className=' overflow-scroll my-14'>
+                <div className=' overflow-y-scroll scrollbar-hide my-14'>
                     <h1 className=' text-[#7c5dfa] mb-4 font-medium'>
                         Bill From
                     </h1>
