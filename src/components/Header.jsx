@@ -71,7 +71,8 @@ function Header() {
 
             {/* Bottom Side */}
             <div>
-              {colorTheme === "light" ? <motion.img onClick={toggleDarkMode} initial={{ scale: 0.6, rotate: 90 }} animate={{ scale: 1, rotate: 360, transition }} whileTap={{ scale: 0.9, rotate: 15 }} src={moon} className='cursor-pointer ml-8 h-6'
+              {colorTheme === "light" ? 
+              <motion.img onClick={toggleDarkMode} initial={{ scale: 0.6, rotate: 90 }} animate={{ scale: 1, rotate: 360, transition }} whileTap={{ scale: 0.9, rotate: 15 }} src={moon} className='cursor-pointer ml-8 h-6'
               />
 
                 : <motion.img className='cursor-pointer ml-8 h-7' onClick={toggleDarkMode} whileTap={{ scale: 0.9, rotate: 15 }} initial={{ rotate: 45 }} animate={{ rotate: 360, transition }} src={sun} />

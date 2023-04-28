@@ -9,7 +9,7 @@ function InvoiceCard({ invoice }) {
         to={`invoice?${invoice.id}`}
         >
             {/* Big Screen  */}
-            <div className=' hidden md:flex cursor-pointer hover:border border-purple-500 py-4 shadow-sm px-6 dark:bg-[#1E2139] bg-white rounded-lg  items-center justify-between'>
+            <div className=' hidden md:flex cursor-pointer duration-100  ease-in-out  hover:border border-purple-500 py-4 shadow-sm px-6 dark:bg-[#1E2139] bg-white rounded-lg  items-center justify-between'>
                 <div className=' flex items-center '>
                     <h2 className=' dark:text-white '>
                         <span className=' text-[#7e88c3]'>
